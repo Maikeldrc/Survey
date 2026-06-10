@@ -1,0 +1,6 @@
+{
+  "name": "Itera Health Satisfaction Tracker",
+  "description": "Plataforma premium para el registro, monitoreo y análisis de satisfacción de pacientes para CCM y RPM de Itera Health, integrada en tiempo real con Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

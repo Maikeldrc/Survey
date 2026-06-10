@@ -1,0 +1,551 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", SFMono-Regular, monospace;
+
+  --color-brand-dark: #0d1f2d;
+  --color-brand-navy: #132238;
+  --color-brand-coal: #06121c;
+  --color-brand-blue: #1b7fc4;
+  --color-brand-light: #f0f7ff;
+  --color-brand-coral: #e8552a;
+  --color-brand-teal: #0aada3;
+}
+
+/* ─── Design Tokens ──────────────────────────────────────────────── */
+:root {
+  /* Core palette aligned with Itera Health logo (white bg, navy + blue) */
+  --itera-ink:         #0d1f2d;
+  --itera-ink-soft:    #2c3e50;
+  --itera-muted:       #64748b;
+  --itera-muted-light: #94a3b8;
+  --itera-line:        #e2eaf0;
+  --itera-line-soft:   #f1f5f9;
+
+  /* Surfaces */
+  --itera-bg:          #f5f8fc;
+  --itera-panel:       #ffffff;
+  --itera-panel-soft:  #f8fafd;
+  --itera-panel-hover: #f0f6ff;
+
+  /* Brand accents */
+  --itera-blue:        #1b7fc4;
+  --itera-blue-light:  #2d9de0;
+  --itera-blue-deep:   #0e5a98;
+  --itera-blue-ghost:  rgba(27, 127, 196, 0.08);
+  --itera-teal:        #0aada3;
+  --itera-coral:       #e8552a;
+  --itera-navy:        #132238;
+  --itera-navy-mid:    #1d3350;
+
+  /* Shadows */
+  --shadow-xs:  0 1px 2px rgba(13, 31, 45, 0.04);
+  --shadow-sm:  0 2px 8px rgba(13, 31, 45, 0.06), 0 1px 2px rgba(13, 31, 45, 0.04);
+  --shadow-md:  0 8px 24px rgba(13, 31, 45, 0.10), 0 2px 6px rgba(13, 31, 45, 0.05);
+  --shadow-lg:  0 20px 48px rgba(13, 31, 45, 0.13), 0 4px 12px rgba(13, 31, 45, 0.06);
+  --shadow-blue: 0 8px 28px rgba(27, 127, 196, 0.22);
+  --shadow-blue-lg: 0 16px 40px rgba(27, 127, 196, 0.28);
+
+  --itera-radius: 10px;
+  --itera-radius-lg: 16px;
+}
+
+/* ─── Reset & Base ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--itera-bg);
+  color: var(--itera-ink);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.6; }
+
+/* ─── Form controls ──────────────────────────────────────────────── */
+input, select, textarea {
+  border-color: var(--itera-line) !important;
+  background-color: var(--itera-panel) !important;
+  color: var(--itera-ink) !important;
+  border-radius: var(--itera-radius) !important;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: var(--itera-blue) !important;
+  box-shadow: 0 0 0 3px rgba(27, 127, 196, 0.15) !important;
+  background-color: var(--itera-panel) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--itera-muted-light);
+}
+
+::selection {
+  background: rgba(27, 127, 196, 0.15);
+  color: var(--itera-ink);
+}
+
+/* ─── Scrollbars ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(13, 31, 45, 0.15);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 31, 45, 0.28);
+}
+
+/* ─── App Root Background ────────────────────────────────────────── */
+#applet-main-container {
+  min-height: 100vh;
+  background-color: #f0f5fb;
+  background-image:
+    radial-gradient(circle, rgba(27, 127, 196, 0.13) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-attachment: fixed;
+}
+
+/* ─── Login / Auth Screen ────────────────────────────────────────── */
+#login-container {
+  background:
+    radial-gradient(ellipse 100% 80% at 60% 0%, rgba(27, 127, 196, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 0% 100%, rgba(10, 173, 163, 0.05) 0%, transparent 50%),
+    linear-gradient(160deg, #eef5fb 0%, #f7fafd 50%, #eaf2f8 100%);
+}
+
+#login-container > div {
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.97) !important;
+  backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(27, 127, 196, 0.14) !important;
+  border-radius: var(--itera-radius-lg) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.9),
+    var(--shadow-lg) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Top accent stripe */
+#login-container > div::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--itera-blue) 0%, var(--itera-teal) 60%, var(--itera-blue-light) 100%);
+  border-radius: var(--itera-radius-lg) var(--itera-radius-lg) 0 0;
+}
+
+/* Subtle watermark circle behind card */
+#login-container > div::after {
+  content: "";
+  position: absolute;
+  bottom: -80px; right: -80px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(27, 127, 196, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ─── Logo container ─────────────────────────────────────────────── */
+#itera-logo-container img {
+  display: block;
+}
+
+/* ─── Login button ───────────────────────────────────────────────── */
+#btn-login-submit {
+  background: linear-gradient(135deg, var(--itera-blue) 0%, var(--itera-blue-deep) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: var(--itera-radius) !important;
+  box-shadow: var(--shadow-blue);
+  color: #fff;
+  transition: all 200ms ease;
+}
+
+#btn-login-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--itera-blue-light) 0%, var(--itera-blue) 100%) !important;
+  box-shadow: var(--shadow-blue-lg);
+  transform: translateY(-1px);
+}
+
+#btn-login-submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-blue);
+}
+
+button.bg-sky-600, button.bg-brand-dark {
+  background: linear-gradient(135deg, var(--itera-blue) 0%, var(--itera-blue-deep) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: var(--itera-radius) !important;
+  box-shadow: var(--shadow-blue);
+  transition: all 200ms ease;
+}
+
+button.bg-sky-600:hover:not(:disabled),
+button.bg-brand-dark:hover:not(:disabled) {
+  box-shadow: var(--shadow-blue-lg);
+  transform: translateY(-1px);
+}
+
+
+#dashboard-operational-console nav {
+  background: #ffffff !important;
+  border: 1px solid #e4eaf4 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 12px rgba(13, 31, 45, 0.03) !important;
+}
+
+#dashboard-operational-console nav button {
+  border-radius: var(--itera-radius) !important;
+  transition: all 160ms ease !important;
+}
+
+/* Tab pill container in nav */
+#dashboard-operational-console nav > div:nth-child(2) {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ─── Provider Selection Card ────────────────────────────────────── */
+#provider-selection-view > div {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(27, 127, 196, 0.12) !important;
+  border-radius: var(--itera-radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+#provider-selection-view > div::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--itera-blue) 0%, var(--itera-teal) 100%);
+}
+
+#providers-list button {
+  background: var(--itera-panel) !important;
+  border: 1px solid var(--itera-line) !important;
+  border-radius: var(--itera-radius) !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: all 180ms ease !important;
+}
+
+#providers-list button:hover {
+  border-color: var(--itera-blue) !important;
+  background: var(--itera-blue-ghost) !important;
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(27, 127, 196, 0.08) !important;
+  transform: translateY(-2px);
+}
+
+/* ─── Workspace Container ────────────────────────────────────────── */
+#applet-workspace-container {
+  width: 100%;
+  padding-bottom: 48px;
+}
+
+/* ─── Panels / Cards ─────────────────────────────────────────────── */
+#login-container > div,
+#dashboard-root > div,
+#patient-list-root > div,
+#survey-form-root > div,
+#patients-table-container,
+#filters-container {
+  border-color: rgba(27, 127, 196, 0.12) !important;
+  border-radius: var(--itera-radius) !important;
+}
+
+.geo-card {
+  background: var(--itera-panel);
+  border: 1px solid var(--itera-line);
+  border-radius: var(--itera-radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.geo-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.geo-header {
+  background: var(--itera-panel);
+  border-bottom: 1px solid var(--itera-line);
+}
+
+/* ─── Tables ─────────────────────────────────────────────────────── */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead tr {
+  background: linear-gradient(180deg, #f0f6fb 0%, #eaf2f9 100%) !important;
+}
+
+thead th {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--itera-muted) !important;
+}
+
+tbody tr {
+  transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+
+tbody tr:hover {
+  background: var(--itera-blue-ghost) !important;
+}
+
+/* ─── KPI Cards gradient bottom bar ─────────────────────────────── */
+#kpis-summary-grid > div {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--itera-radius);
+  background: var(--itera-panel);
+  border: 1px solid var(--itera-line);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+#kpis-summary-grid > div:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+#kpis-summary-grid > div::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--itera-blue), var(--itera-teal), var(--itera-coral));
+  opacity: 0.7;
+}
+
+/* ─── Quick action / pill buttons ───────────────────────────────── */
+#quick-actions-bar button {
+  border-radius: var(--itera-radius) !important;
+  transition: all 160ms ease !important;
+}
+
+#quick-actions-bar button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+#call-status-distribution-pills > div,
+#donut-legend span {
+  border-radius: var(--itera-radius) !important;
+}
+
+/* ─── Survey Steps ───────────────────────────────────────────────── */
+#survey-steps > div,
+#survey-steps > span {
+  border-radius: var(--itera-radius) !important;
+}
+
+/* ─── Toast Notification ─────────────────────────────────────────── */
+#global-toast-feedback {
+  border-radius: var(--itera-radius) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* ─── Iframe Banner ──────────────────────────────────────────────── */
+#iframe-tip-banner {
+  background: linear-gradient(90deg, var(--itera-navy) 0%, var(--itera-navy-mid) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+#iframe-tip-banner button {
+  border-radius: var(--itera-radius) !important;
+}
+
+/* ─── Utility shadows ────────────────────────────────────────────── */
+.shadow-premium     { box-shadow: var(--shadow-sm); }
+.shadow-premium-lg  { box-shadow: var(--shadow-lg); }
+.border-brand-light-200 { border-color: rgba(13, 31, 45, 0.08); }
+
+/* ─── Animations ─────────────────────────────────────────────────── */
+.animate-fadeIn {
+  animation: fadeIn 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtle pulse for live indicators */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* ─── Global loading spinner ─────────────────────────────────────── */
+#global-spinner {
+  background: linear-gradient(135deg, #e8f4fd, #f0f8ff) !important;
+  border: 1px solid rgba(27, 127, 196, 0.2) !important;
+  border-radius: var(--itera-radius) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* ─── Provider button corners ────────────────────────────────────── */
+#provider-selection-view button,
+#patient-list-root button,
+#survey-form-root button {
+  border-radius: var(--itera-radius) !important;
+}
+
+/* ─── Top Navigation Bar ─────────────────────────────────────────── */
+.app-shell {
+  width: min(calc(100vw - 64px), 1840px);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.top-header {
+  width: 100%;
+  padding-left: 32px;
+  padding-right: 32px;
+  box-sizing: border-box;
+}
+
+.logout-button {
+  padding-left: 18px;
+  padding-right: 22px;
+  min-height: 44px;
+}
+
+.header-button,
+.header-tab,
+.language-button {
+  min-height: 44px;
+  padding-left: 18px;
+  padding-right: 18px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.top-header,
+.page-content,
+.hero-card,
+.metrics-row,
+.filters-row,
+.table-section {
+  width: 100%;
+}
+
+.main-content {
+  width: 100%;
+}
+
+/* ─── Fine-print misc alignment ─────────────────────────────────── */
+.geo-border {
+  border: 1px solid var(--itera-line);
+}
+
+/* ─── Survey Layout Overhaul ─────────────────────────────────────── */
+.survey-shell {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.survey-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .survey-layout {
+    grid-template-columns: 420px minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .survey-layout {
+    grid-template-columns: 500px minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+.form-card {
+  width: 100%;
+  min-width: 0;
+  padding: 32px 40px;
+  border-radius: 28px;
+  box-sizing: border-box;
+}
+
+.rating-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 12px;
+}
