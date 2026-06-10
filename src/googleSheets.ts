@@ -435,7 +435,7 @@ export async function appendSurveyResponseToGoogleSheets(spreadsheetId: string, 
   ];
 
   const surveyAppendRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/SurveyResponses!A:append?valueInputOption=USER_ENTERED`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/SurveyResponses!A1:X:append?valueInputOption=USER_ENTERED`,
     {
       method: 'POST',
       headers: {
@@ -470,7 +470,7 @@ export async function appendCallAttemptToGoogleSheets(spreadsheetId: string, tok
   ];
 
   const callAppendRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/CallAttempts!A:append?valueInputOption=USER_ENTERED`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/CallAttempts!A1:K:append?valueInputOption=USER_ENTERED`,
     {
       method: 'POST',
       headers: {
@@ -540,7 +540,7 @@ export async function addPatientToGoogleSheets(
     p.Notes
   ];
 
-  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Patients!A:append?valueInputOption=USER_ENTERED`, {
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Patients!A1:J:append?valueInputOption=USER_ENTERED`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

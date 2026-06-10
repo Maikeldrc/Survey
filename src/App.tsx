@@ -494,6 +494,8 @@ export default function App() {
       // Direct trigger of Google Sign-In Popup.
       setIsLoggingInGoogle(true);
       initiateGoogleSignIn(cId);
+    } else {
+      showFeedback('Error: Google Client ID no configurado. Por favor define VITE_GOOGLE_CLIENT_ID en Vercel.', 'error');
     }
   };
 
