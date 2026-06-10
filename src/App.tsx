@@ -26,7 +26,8 @@ import {
   ExternalLink,
   ChevronDown,
   Sparkles,
-  ArrowLeft
+  ArrowLeft,
+  BookOpen
 } from 'lucide-react';
 import { 
   Patient, 
@@ -61,6 +62,7 @@ import PatientList from './components/PatientList';
 import SurveyForm from './components/SurveyForm';
 import Dashboard from './components/Dashboard';
 import IteraLogo from './components/IteraLogo';
+import EvaluationGuide from './components/EvaluationGuide';
 import { TRANSLATIONS } from './translations';
 
 export default function App() {
@@ -94,7 +96,7 @@ export default function App() {
   const [activeProvider, setActiveProvider] = useState(() => {
     return localStorage.getItem('ps_active_provider') || '';
   });
-  const [activeTab, setActiveTab] = useState<'list' | 'dashboard'>('list');
+  const [activeTab, setActiveTab] = useState<'list' | 'dashboard' | 'guide'>('list');
 
   // Unified Database tables
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -1257,6 +1259,30 @@ export default function App() {
                       <TrendingUp className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-white' : 'text-slate-400'}`} />
                       <span>{T.tabDashboard}</span>
                     </button>
+
+                    <button
+                      onClick={() => {
+                        setActiveTab('guide');
+                        setActivePatient(null);
+                      }}
+                      className="text-xs font-bold transition flex items-center whitespace-nowrap animate-fadeIn header-tab"
+                      style={{
+                        background: activeTab === 'guide' ? '#0aada3' : '#f1f5f9',
+                        color: activeTab === 'guide' ? '#ffffff' : '#64748b',
+                        border: '1px solid',
+                        borderColor: activeTab === 'guide' ? '#0aada3' : '#e2e8f0',
+                        boxShadow: activeTab === 'guide' ? '0 4px 10px rgba(10,173,163,0.28)' : 'none',
+                        cursor: 'pointer',
+                        minHeight: '44px',
+                        paddingLeft: '18px',
+                        paddingRight: '18px',
+                        gap: '8px',
+                        borderRadius: 'var(--itera-radius)',
+                      }}
+                    >
+                      <BookOpen className={`w-4 h-4 ${activeTab === 'guide' ? 'text-white' : 'text-slate-400'}`} />
+                      <span>{language === 'es' ? 'Metodología' : 'Methodology'}</span>
+                    </button>
                   </div>
 
                   {/* Quick action buttons */}
@@ -1357,7 +1383,7 @@ export default function App() {
                     language={language}
                   />
                 )
-              ) : (
+              ) : activeTab === 'dashboard' ? (
                 /* aggregate executive metrics dashboard visualizer */
                 <Dashboard 
                   patients={patients}
@@ -1365,6 +1391,9 @@ export default function App() {
                   attempts={callAttempts}
                   language={language}
                 />
+              ) : (
+                /* evaluation methodology guide */
+                <EvaluationGuide language={language} />
               )}
             </div>
           </div>
