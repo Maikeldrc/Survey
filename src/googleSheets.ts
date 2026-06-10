@@ -149,7 +149,14 @@ const SURVEY_RESPONSES_HEADERS = [
   'What Could Be Improved',
   'Call Status',
   'Follow-up Needed',
-  'Internal Notes'
+  'Internal Notes',
+  'General Satisfaction Score',
+  'General Satisfaction Stars',
+  'General Satisfaction Label',
+  'Follow-up Required',
+  'Follow-up Reasons',
+  'Score Calculated At',
+  'Score Version'
 ];
 
 const CALL_ATTEMPTS_HEADERS = [
@@ -254,7 +261,7 @@ export async function createPatientSurveySpreadsheet(token: string): Promise<str
           values: [PATIENTS_HEADERS]
         },
         {
-          range: 'SurveyResponses!A1:X1',
+          range: 'SurveyResponses!A1:AE1',
           values: [SURVEY_RESPONSES_HEADERS]
         },
         {
@@ -334,7 +341,7 @@ export async function fetchPatientsFromGoogleSheets(spreadsheetId: string, token
  * Fetch Survey Responses from Google Sheet
  */
 export async function fetchResponsesFromGoogleSheets(spreadsheetId: string, token: string): Promise<SurveyResponse[]> {
-  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/SurveyResponses!A2:X2000`, {
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/SurveyResponses!A2:AE2000`, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -369,7 +376,14 @@ export async function fetchResponsesFromGoogleSheets(spreadsheetId: string, toke
     WhatCouldBeImproved: row[20] || '',
     CallStatus: (row[21] || 'Completed') as SurveyResponse['CallStatus'],
     FollowUpNeeded: (row[22] || 'No') as SurveyResponse['FollowUpNeeded'],
-    InternalNotes: row[23] || ''
+    InternalNotes: row[23] || '',
+    generalSatisfactionScore: row[24] !== undefined && row[24] !== '' ? Number(row[24]) : null,
+    generalSatisfactionStars: row[25] !== undefined && row[25] !== '' ? Number(row[25]) : null,
+    generalSatisfactionLabel: row[26] || null,
+    followUpRequired: row[27] === 'TRUE' || row[27] === 'true' || row[27] === true,
+    followUpReasons: row[28] || '',
+    scoreCalculatedAt: row[29] || null,
+    scoreVersion: row[30] || 'v1.0'
   }));
 }
 
@@ -431,11 +445,18 @@ export async function appendSurveyResponseToGoogleSheets(spreadsheetId: string, 
     res.WhatCouldBeImproved,
     res.CallStatus,
     res.FollowUpNeeded,
-    res.InternalNotes
+    res.InternalNotes,
+    res.generalSatisfactionScore !== null ? res.generalSatisfactionScore : '',
+    res.generalSatisfactionStars !== null ? res.generalSatisfactionStars : '',
+    res.generalSatisfactionLabel || '',
+    res.followUpRequired ? 'TRUE' : 'FALSE',
+    res.followUpReasons || '',
+    res.scoreCalculatedAt || '',
+    res.scoreVersion || ''
   ];
 
   const surveyAppendRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/SurveyResponses!A1:X:append?valueInputOption=USER_ENTERED`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/SurveyResponses!A1:append?valueInputOption=USER_ENTERED`,
     {
       method: 'POST',
       headers: {
@@ -470,7 +491,7 @@ export async function appendCallAttemptToGoogleSheets(spreadsheetId: string, tok
   ];
 
   const callAppendRes = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/CallAttempts!A1:K:append?valueInputOption=USER_ENTERED`,
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/CallAttempts!A1:append?valueInputOption=USER_ENTERED`,
     {
       method: 'POST',
       headers: {
@@ -540,7 +561,7 @@ export async function addPatientToGoogleSheets(
     p.Notes
   ];
 
-  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Patients!A1:J:append?valueInputOption=USER_ENTERED`, {
+  const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Patients!A1:append?valueInputOption=USER_ENTERED`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -707,7 +728,7 @@ export async function initializeExistingSpreadsheet(spreadsheetId: string, token
           values: [PATIENTS_HEADERS]
         },
         {
-          range: 'SurveyResponses!A1:X1',
+          range: 'SurveyResponses!A1:AE1',
           values: [SURVEY_RESPONSES_HEADERS]
         },
         {

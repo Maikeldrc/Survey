@@ -40,6 +40,14 @@ export interface SurveyResponse {
   CallStatus: 'Completed' | 'Declined';
   FollowUpNeeded: 'Sí' | 'No';
   InternalNotes: string;
+  // New calculated fields
+  generalSatisfactionScore: number | null;
+  generalSatisfactionStars: number | null;
+  generalSatisfactionLabel: string | null;
+  followUpRequired: boolean;
+  followUpReasons: string; // Stored as comma-separated or text description
+  scoreCalculatedAt: string | null;
+  scoreVersion: string;
 }
 
 export interface CallAttempt {
@@ -121,7 +129,9 @@ export interface FHIRObservation {
   subject: FHIRReference;
   effectiveDateTime: string;
   valueInteger?: number;
+  valueDecimal?: number;
   valueString?: string;
+  derivedFrom?: FHIRReference[];
 }
 
 export interface FHIRTask {

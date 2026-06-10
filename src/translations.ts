@@ -112,6 +112,8 @@ export const TRANSLATIONS = {
     noAnswerLabel: "No Contesta (No Answer)",
     rejectedDeclined: "Rechazadas (Declined)",
     callBackLabel: "Volver a Llamar (Call Back)",
+    followUpRequired: "Seguimiento Requerido",
+    followUpSubtitle: "Casos que requieren atención",
   },
   en: {
     // App.tsx
@@ -226,5 +228,7 @@ export const TRANSLATIONS = {
     noAnswerLabel: "No Answer",
     rejectedDeclined: "Rejected (Declined)",
     callBackLabel: "Call Back",
+    followUpRequired: "Follow-up Required",
+    followUpSubtitle: "Cases requiring attention",
   }
 };

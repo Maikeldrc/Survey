@@ -302,8 +302,9 @@ export default function PatientList({
   const kpiCB      = providerPatients.filter(p => p.Status === 'Call Back').length;
   const kpiDecl    = providerPatients.filter(p => p.Status === 'Declined').length;
   const provResponses = (responses || []).filter(r => r.Provider === selectedProvider);
-  const kpiAvg = provResponses.length > 0
-    ? (provResponses.reduce((s, r) => s + (r.OverallSatisfactionScore || 0), 0) / provResponses.length).toFixed(1)
+  const completedResponses = provResponses.filter(r => r.CallStatus === 'Completed' && r.generalSatisfactionScore !== null);
+  const kpiAvg = completedResponses.length > 0
+    ? (completedResponses.reduce((s, r) => s + (r.generalSatisfactionScore || 0), 0) / completedResponses.length).toFixed(1)
     : '—';
 
   /* ── Form helpers ────────────────────────────────────────── */
@@ -485,6 +486,7 @@ export default function PatientList({
                   const isCallback = callbackPatientId === p.PatientID;
                   const initials = p.PatientName.split(' ').map(n => n[0]).slice(0, 2).join('');
                   const av = avatarColor(p);
+                  const resp = (responses || []).find(r => r.PatientID === p.PatientID);
 
                   return (
                     <tr key={p.PatientID} style={{
@@ -501,7 +503,26 @@ export default function PatientList({
                             {initials}
                           </div>
                           <div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>{p.PatientName}</div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                              <span>{p.PatientName}</span>
+                              {resp?.followUpRequired && (
+                                <span style={{
+                                  background: '#fef2f2',
+                                  color: '#ef4444',
+                                  border: '1px solid #fecaca',
+                                  fontSize: 9,
+                                  fontWeight: 800,
+                                  padding: '1.5px 6px',
+                                  borderRadius: 4,
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 2
+                                }}>
+                                  <AlertCircle style={{ width: 10, height: 10 }} />
+                                  <span>{language === 'es' ? 'Seguimiento' : 'Follow-up'}</span>
+                                </span>
+                              )}
+                            </div>
                             <div style={{ fontSize: 10, color: '#9baac1', marginTop: 1 }}>MRN: {p.MRN}</div>
                           </div>
                         </div>
@@ -533,9 +554,9 @@ export default function PatientList({
                       {/* Survey Result */}
                       <td style={{ padding: '14px 14px', whiteSpace: 'nowrap' }}>
                         {(() => {
-                          const resp = (responses || []).find(r => r.PatientID === p.PatientID);
-                          const score = resp?.OverallSatisfactionScore;
-                          if (!resp || !score) {
+                          const score = resp?.generalSatisfactionScore;
+                          const stars = resp?.generalSatisfactionStars || 0;
+                          if (resp?.CallStatus !== 'Completed' || score === null || score === undefined) {
                             return <span style={{ color: '#9baac1', fontSize: 12 }}>—</span>;
                           }
                           return (
@@ -544,18 +565,38 @@ export default function PatientList({
                                 {score}/5
                               </span>
                               <div style={{ display: 'flex', color: '#eab308', alignItems: 'center' }}>
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    style={{
-                                      width: 12,
-                                      height: 12,
-                                      fill: i < score ? '#eab308' : 'none',
-                                      color: i < score ? '#eab308' : '#cbd5e1',
-                                      marginLeft: 1,
-                                    }}
-                                  />
-                                ))}
+                                {Array.from({ length: 5 }).map((_, i) => {
+                                  const index = i + 1;
+                                  let fill = 'none';
+                                  let color = '#cbd5e1';
+                                  
+                                  if (stars >= index) {
+                                    fill = '#eab308';
+                                    color = '#eab308';
+                                  } else if (stars >= index - 0.5) {
+                                    return (
+                                      <span key={i} style={{ position: 'relative', width: 12, height: 12, display: 'inline-block', marginLeft: 1 }}>
+                                        <Star style={{ width: 12, height: 12, color: '#cbd5e1', fill: 'none', position: 'absolute', left: 0 }} />
+                                        <span style={{ position: 'absolute', left: 0, top: 0, width: '50%', overflow: 'hidden', height: '100%' }}>
+                                          <Star style={{ width: 12, height: 12, color: '#eab308', fill: '#eab308' }} />
+                                        </span>
+                                      </span>
+                                    );
+                                  }
+                                  
+                                  return (
+                                    <Star
+                                      key={i}
+                                      style={{
+                                        width: 12,
+                                        height: 12,
+                                        fill,
+                                        color,
+                                        marginLeft: 1,
+                                      }}
+                                    />
+                                  );
+                                })}
                               </div>
                             </div>
                           );

@@ -202,35 +202,45 @@ export default function Dashboard({ patients, responses, attempts, language = 'e
 
   // Average overall satisfaction
   const avgOverallSatisfaction = useMemo(() => {
-    const valid = filteredResponses.filter(r => r.OverallSatisfactionScore > 0);
-    if (valid.length === 0) return 0;
-    const sum = valid.reduce((acc, r) => acc + r.OverallSatisfactionScore, 0);
-    return Math.round((sum / valid.length) * 10) / 10;
+    const completed = filteredResponses.filter(r => r.CallStatus === 'Completed' && r.generalSatisfactionScore !== null && r.generalSatisfactionScore !== undefined);
+    if (completed.length === 0) return 0;
+    const sum = completed.reduce((acc, r) => acc + (r.generalSatisfactionScore || 0), 0);
+    return Math.round((sum / completed.length) * 10) / 10;
   }, [filteredResponses]);
 
   // Average Care Manager satisfaction
   const avgCmSatisfaction = useMemo(() => {
-    const valid = filteredResponses.filter(r => r.CareManagerSatisfactionScore > 0);
+    const completed = filteredResponses.filter(r => r.CallStatus === 'Completed');
+    const valid = completed.filter(r => r.CareManagerSatisfactionScore > 0);
     if (valid.length === 0) return 0;
     const sum = valid.reduce((acc, r) => acc + r.CareManagerSatisfactionScore, 0);
     return Math.round((sum / valid.length) * 10) / 10;
   }, [filteredResponses]);
 
-  // Would recommend rate: ('Sí' or 'Tal vez' out of total completed)
+  // Would recommend rate: ('Sí' or 'Yes' out of total Q8 answered in Completed)
   const recommendationRate = useMemo(() => {
-    if (filteredResponses.length === 0) return 0;
-    const recommendYes = filteredResponses.filter(r => r.WouldRecommendService === 'Sí' || r.WouldRecommendService === 'Tal vez').length;
-    return Math.round((recommendYes / filteredResponses.length) * 100);
+    const completed = filteredResponses.filter(r => r.CallStatus === 'Completed');
+    const valid = completed.filter(r => r.WouldRecommendService === 'Sí' || r.WouldRecommendService === 'Yes' || r.WouldRecommendService === 'No' || r.WouldRecommendService === 'Tal vez' || r.WouldRecommendService === 'Maybe');
+    if (valid.length === 0) return 0;
+    const recommendYes = valid.filter(r => r.WouldRecommendService === 'Sí' || r.WouldRecommendService === 'Yes').length;
+    return Math.round((recommendYes / valid.length) * 100);
   }, [filteredResponses]);
 
-  // Overall distribution of scores (1 to 5) for Q1
+  // Overall distribution of scores (1 to 5) for general satisfaction
   const ratingDistribution = useMemo(() => {
     const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     filteredResponses.forEach(r => {
-      const score = r.OverallSatisfactionScore as 1 | 2 | 3 | 4 | 5;
-      if (counts[score] !== undefined) counts[score]++;
+      if (r.CallStatus === 'Completed' && r.generalSatisfactionScore !== null && r.generalSatisfactionScore !== undefined) {
+        const roundedScore = Math.max(1, Math.min(5, Math.round(r.generalSatisfactionScore))) as 1 | 2 | 3 | 4 | 5;
+        counts[roundedScore]++;
+      }
     });
     return counts;
+  }, [filteredResponses]);
+
+  // Count follow-up required surveys
+  const followUpRequiredCount = useMemo(() => {
+    return filteredResponses.filter(r => r.CallStatus === 'Completed' && r.followUpRequired === true).length;
   }, [filteredResponses]);
 
   // CCM vs RPM proportions
@@ -299,6 +309,7 @@ export default function Dashboard({ patients, responses, attempts, language = 'e
         <KPICard icon={<Star style={{ width: 18, height: 18 }} />} label={T.overallSatisfaction} value={avgOverallSatisfaction > 0 ? `${avgOverallSatisfaction} / 5` : '—'} sub={T.weightedAverage} color="#8b5cf6" bg="#f5f3ff" />
         <KPICard icon={<Heart style={{ width: 18, height: 18 }} />} label={T.cmSatisfaction} value={avgCmSatisfaction > 0 ? `${avgCmSatisfaction} / 5` : '—'} sub={T.personalizedCare} color="#10b981" bg="#ecfdf5" />
         <KPICard icon={<Award style={{ width: 18, height: 18 }} />} label={T.wouldRecommend} value={`${recommendationRate}%`} sub={T.favorableRecommendation} color="#6366f1" bg="#e0e7ff" />
+        <KPICard icon={<AlertCircle style={{ width: 18, height: 18 }} />} label={T.followUpRequired} value={String(followUpRequiredCount)} sub={T.followUpSubtitle} color="#ef4444" bg="#fef2f2" />
       </div>
 
       {/* ── Cohort Call logs status distributions pill charts ── */}

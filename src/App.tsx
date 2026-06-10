@@ -33,6 +33,7 @@ import {
   SurveyResponse, 
   CallAttempt 
 } from './types';
+import { processSurveyEvaluation } from './evaluation';
 import { INITIAL_PATIENTS, INITIAL_RESPONSES, INITIAL_ATTEMPTS } from './data';
 import { 
   getCachedToken, 
@@ -290,7 +291,17 @@ export default function App() {
       }
 
       if (storedResponses) {
-        setSurveyResponses(JSON.parse(storedResponses));
+        const parsed = JSON.parse(storedResponses) as SurveyResponse[];
+        const migrated = parsed.map(r => {
+          if (r.CallStatus === 'Completed' && (r.generalSatisfactionScore === null || r.generalSatisfactionScore === undefined)) {
+            return {
+              ...r,
+              ...processSurveyEvaluation(r)
+            } as SurveyResponse;
+          }
+          return r;
+        });
+        setSurveyResponses(migrated);
       } else {
         setSurveyResponses(INITIAL_RESPONSES);
         localStorage.setItem('ps_responses', JSON.stringify(INITIAL_RESPONSES));
@@ -321,7 +332,16 @@ export default function App() {
       setPatients(loadedPatients);
 
       const loadedResponses = await fetchResponsesFromGoogleSheets(sheetId, token);
-      setSurveyResponses(loadedResponses);
+      const migratedResponses = loadedResponses.map(r => {
+        if (r.CallStatus === 'Completed' && (r.generalSatisfactionScore === null || r.generalSatisfactionScore === undefined)) {
+          return {
+            ...r,
+            ...processSurveyEvaluation(r)
+          } as SurveyResponse;
+        }
+        return r;
+      });
+      setSurveyResponses(migratedResponses);
 
       const loadedAttempts = await fetchCallAttemptsFromGoogleSheets(sheetId, token);
       setCallAttempts(loadedAttempts);
@@ -655,7 +675,7 @@ export default function App() {
     const responseId = `RES-${Math.floor(100000 + Math.random() * 900000)}`;
     const formattedSurveyor = googleUserEmail ? `${surveyorName} (${googleUserEmail})` : surveyorName;
 
-    const fullResponse: SurveyResponse = {
+    const rawResponse: SurveyResponse = {
       ResponseID: responseId,
       SurveyDate: today,
       SurveyTime: nowTime,
@@ -679,8 +699,17 @@ export default function App() {
       WhatCouldBeImproved: surveyData.WhatCouldBeImproved || '',
       CallStatus: surveyData.CallStatus || 'Completed',
       FollowUpNeeded: surveyData.FollowUpNeeded || 'No',
-      InternalNotes: surveyData.InternalNotes || ''
+      InternalNotes: surveyData.InternalNotes || '',
+      generalSatisfactionScore: null,
+      generalSatisfactionStars: null,
+      generalSatisfactionLabel: null,
+      followUpRequired: false,
+      followUpReasons: '',
+      scoreCalculatedAt: null,
+      scoreVersion: 'v1.0'
     };
+
+    const fullResponse = processSurveyEvaluation(rawResponse) as SurveyResponse;
 
     const attempt: CallAttempt = {
       AttemptID: `ATT-${Math.floor(100000 + Math.random() * 900000)}`,

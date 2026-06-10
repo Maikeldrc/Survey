@@ -148,7 +148,14 @@ export const INITIAL_RESPONSES: SurveyResponse[] = [
     WhatCouldBeImproved: 'Nada.',
     CallStatus: 'Completed',
     FollowUpNeeded: 'No',
-    InternalNotes: 'Completado sin incidentes.'
+    InternalNotes: 'Completado sin incidentes.',
+    generalSatisfactionScore: 5,
+    generalSatisfactionStars: 5,
+    generalSatisfactionLabel: 'Excellent Satisfaction',
+    followUpRequired: false,
+    followUpReasons: '',
+    scoreCalculatedAt: '2026-06-05T10:30:00.000Z',
+    scoreVersion: 'v1.0'
   },
   {
     ResponseID: 'RESP-002',
@@ -174,7 +181,14 @@ export const INITIAL_RESPONSES: SurveyResponse[] = [
     WhatCouldBeImproved: 'La app a veces demora en subir.',
     CallStatus: 'Completed',
     FollowUpNeeded: 'No',
-    InternalNotes: 'Satisfecho.'
+    InternalNotes: 'Satisfecho.',
+    generalSatisfactionScore: 4.8,
+    generalSatisfactionStars: 5,
+    generalSatisfactionLabel: 'Excellent Satisfaction',
+    followUpRequired: false,
+    followUpReasons: '',
+    scoreCalculatedAt: '2026-05-15T16:30:00.000Z',
+    scoreVersion: 'v1.0'
   }
 ];
 
